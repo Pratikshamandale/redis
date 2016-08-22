@@ -26,15 +26,16 @@ package "redis-server" do
 end
 
 
+cookbook_file "/etc/redis/redis.conf" do
+   source "redis.conf"
+   owner "root"
+   group "root"
+   mode 0644
+end
 
-template "/etc/redis/redis.conf" do
-        source "redis.conf.erb"
-        variables({
-                :web_server_ip => node['redis']['web_server_ip'],
-                :active_mq_server_ip => node['redis']['active_mq_server_ip']
-        })
-  	owner "root"
-  	group "root"
-  	mode  "0644"
-        notifies :restart, "service[redis-server]"
+
+
+service "redis-server" do
+        supports :restart => :true
+        action [:enable, :start]
 end
